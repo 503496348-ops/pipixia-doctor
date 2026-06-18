@@ -1,0 +1,7 @@
+interface:
+  display_name: "皮皮虾医生"
+  short_description: "面向小白的 Agent 体检、分诊和安全修复助手"
+  default_prompt: "Use $openclaw-doctor to run a beginner-friendly Agent health check and suggest safe fixes."
+
+policy:
+  allow_implicit_invocation: true

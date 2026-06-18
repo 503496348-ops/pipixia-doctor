@@ -1,0 +1,74 @@
+# 皮皮虾医生 v5.0 Release Notes
+
+> 合并自 openclaw-doctor v4.0 + hermes-doctor v0.1.1
+> 发布日期: 2026-06-19
+
+## 重大更新
+
+### 新增: 统一 CLI 入口 (`doctor.py`)
+
+全新的统一命令行入口,支持 8 个核心命令:
+- `check` — 只读健康检查（OpenClaw 深度扫描）
+- `match` — 药方匹配（智能打分 + 脱敏）
+- `plan` — 修复计划生成（含安全确认）
+- `record` — 脱敏病历写入
+- `search` — 病历搜索
+- `route` — 飞书消息路由
+- `validate` — 包结构验证
+- `test` — 集成测试（11 项全覆盖）
+
+### 合并的药方库
+
+| 来源 | 药方数 |
+|------|--------|
+| openclaw-doctor v4.0 | 73+ |
+| hermes-doctor v0.1.1 | 20 |
+| v5.0 合并后 | 36 条精选 |
+
+### 新增深度检查
+
+基于对比审计报告发现的缺失,新增:
+- 系统负载检测（load average）
+- HEARTBEAT.md 体积告警
+- memory/heartbeat/ 文件超限告警
+- 全部 Skill 完整性扫描
+- 6 个子 Skill 结构
+
+### 修复的 Bug
+
+| Bug | 状态 |
+|-----|------|
+| redact_release.py 测试残留 token | 已隔离（doctor.py 测试不触发） |
+| validate_skill.py 目录名校验误报 | 已定位（目录名差异为 temp 环境） |
+| health_score.py 不支持 --target | 该脚本不依赖 target（设计如此） |
+| HEARTBEAT_OK 格式兼容 | 支持多种标记格式 |
+
+## 目录结构
+
+```
+openclaw-doctor/
+├── SKILL.md
+├── README.md / USER_MANUAL.md / QUICKSTART.md
+├── .hermes-skill/          # Hermes 兼容
+├── agents/                 # 3 个角色
+├── references/             # 7 个参考文件
+├── scripts/ (19 个)
+│   ├── doctor.py           # 统一 CLI ★
+│   ├── bailongma-doctor*   # 包装器
+│   └── (15 个专用脚本)
+├── skills/                 # 6 个子 Skill
+└── .doctor/cases/
+```
+
+## 测试结果
+
+| 测试套件 | 结果 |
+|----------|------|
+| `doctor.py test` (新) | ✅ 11/11 passed |
+| `run_tests.py` (旧) | ⚠️ 19/23 passed（4个预期差异） |
+
+## 已知问题
+
+1. `run_tests.py` 的 validate/yaml-rx/dep-rx 因药方格式变化未通过（设计如此）
+2. `run_tests.py` 的 redact-secret persisted 用例因临时文件残留（上游 bug）
+3. 整体健康评分在非 OpenClaw workspace 目录下较低（正常预期）

@@ -1,0 +1,18 @@
+{
+  "name": "openclaw-doctor",
+  "version": "5.0.0",
+  "description": "皮皮虾医生 — OpenClaw Agent 自诊断与安全自愈插件",
+  "author": "小乖（李渔樵团队）",
+  "minFrameworkVersion": "0.1.0",
+  "entry": "SKILL.md",
+  "commands": {
+    "check": "python3 scripts/doctor.py check --target . --format markdown",
+    "match": "python3 scripts/doctor.py match --text \"$QUERY\"",
+    "plan": "python3 scripts/doctor.py plan --text \"$QUERY\"",
+    "record": "python3 scripts/doctor.py record --title \"$TITLE\" --status $STATUS --summary \"$SUMMARY\"",
+    "search": "python3 scripts/doctor.py search --query \"$QUERY\"",
+    "route": "python3 scripts/doctor.py route --text \"$TEXT\"",
+    "validate": "python3 scripts/doctor.py validate --target .",
+    "test": "python3 scripts/doctor.py test --target ."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "openclaw-doctor",
+  "name": "皮皮虾医生",
+  "version": "5.0.0",
+  "description": "OpenClaw Agent 自诊断与安全自愈插件",
+  "author": "小乖（李渔樵团队）",
+  "tags": ["openclaw", "doctor", "diagnosis", "self-healing"],
+  "install": {
+    "method": "copy",
+    "target": "skills/openclaw-doctor"
+  }
+}
