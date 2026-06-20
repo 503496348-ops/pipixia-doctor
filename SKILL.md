@@ -1,14 +1,14 @@
 ---
 name: openclaw-doctor
-description: 皮皮虾医生 v5.0 — OpenClaw Agent 自诊断与安全自愈插件。支持体检、看看状态、报错了、出问题了、帮我修一下、自诊断、自愈、药方库、排查、问题排查、系统体检、快速检查、维护、修复指导、诊断报告、安全修复、健康报告、开药方、故障排查、病历搜索、消息路由。
-version: 5.0.0
+description: 皮皮虾医生 v5.1 — OpenClaw Agent 自诊断与安全自愈插件。支持体检、看看状态、报错了、出问题了、帮我修一下、自诊断、自愈、药方库、排查、问题排查、系统体检、快速检查、维护、修复指导、诊断报告、安全修复、健康报告、开药方、故障排查、病历搜索、消息路由、Agent快照、数字遗产、复活、药方自学习。
+version: 5.1.0
 author: 小乖（李渔樵团队）
 tags: [openclaw, doctor, diagnosis, self-healing, agent, health-check, prescription]
 requires_tools: [read_file, write_file, edit, exec, search_files]
 requires_toolsets: [file, terminal]
 ---
 
-# 皮皮虾医生（OpenClaw Doctor）v5.0
+# 皮皮虾医生（OpenClaw Doctor）v5.1
 
 皮皮虾医生是一个面向小白用户的 Agent 自诊断与安全自愈 Skill。不是直接替用户乱修，而是先体检、再分诊、开药方，最后按风险等级确认修复。
 
@@ -47,7 +47,20 @@ python3 scripts/doctor.py route --text "皮皮虾医生 体检" --format json
 python3 scripts/doctor.py validate --target .
 python3 scripts/doctor.py test --target .
 
-# 包装器（非开发者）
+# Agent 快照与恢复（v5.1 数字遗产+复活）
+python3 scripts/doctor.py snapshot --target . --snapshot-action save --description "版本描述"
+python3 scripts/doctor.py snapshot --target . --snapshot-action list
+python3 scripts/doctor.py snapshot --target . --snapshot-action verify --snapshot-id snap-XXXX
+python3 scripts/doctor.py snapshot --target . --snapshot-action restore --snapshot-id snap-XXXX --dry-run
+
+# 药方自学习（v5.1 智能进化）
+python3 scripts/doctor.py learn --target . --learn-action report
+python3 scripts/doctor.py learn --target . --learn-action feedback --rx-id RX-XXX --query "错误文本" --outcome miss
+python3 scripts/doctor.py learn --target . --learn-action effectiveness
+python3 scripts/doctor.py learn --target . --learn-action candidates
+python3 scripts/doctor.py learn --target . --learn-action gaps
+
+# 包装器（非开发者）@
 scripts/bailongma-doctor check --target .
 
 # 专用脚本（老用户兼容）
@@ -92,6 +105,8 @@ openclaw-doctor/
 │   └── workflow_guide.md          # 工作流与质量门
 ├── scripts/                       # 专用脚本
 │   ├── doctor.py                  # 统一 CLI 入口（新增）
+│   ├── agent_snapshot.py          # Agent 快照与恢复（v5.1 新增）
+│   ├── rx_learner.py              # 药方自学习引擎（v5.1 新增）
 │   ├── bailongma-doctor           # 包装器（Unix）
 │   ├── bailongma-doctor.cmd       # 包装器（Windows）
 │   ├── doctor_check.py            # 只读健康检查

@@ -1,4 +1,37 @@
-# 皮皮虾医生 v5.0 Release Notes
+# 皮皮虾医生 v5.1 Release Notes
+
+> 品牌: AtomCollide-智械工坊
+> 发布日期: 2026-06-20
+
+## v5.1 新增
+
+### 新增: Agent 快照与恢复 (`agent_snapshot.py`)
+
+实现核心"数字遗产+复活"能力：
+- 创建 Agent 完整状态快照（SOUL/MEMORY/skills/configs + SHA-256 校验）
+- 快照列表、详情查看、两版本差异对比
+- 从快照一键恢复（含自动备份 + dry-run 预演）
+- 状态验证（当前 vs 快照一致性检查）
+
+### 新增: 药方自学习引擎 (`rx_learner.py`)
+
+反馈驱动的药方智能进化：
+- 追踪每个药方的命中/未命中/有效/无效反馈
+- 计算药方成功率和趋势分析（improving/declining/stable）
+- 从未解决的重复错误中自动聚类生成候选药方
+- 从用户手动解决的案例中提取新药方建议
+- 药方覆盖率缺口分析
+
+### CLI 新增命令
+
+| 命令 | 说明 |
+|------|------|
+| `doctor.py snapshot --snapshot-action save/list/diff/restore/verify` | Agent 快照与恢复 |
+| `doctor.py learn --learn-action feedback/effectiveness/candidates/gaps/report` | 药方自学习 |
+
+---
+
+# 皮皮虾医生 v5.0 Release Notes (历史)
 
 > 合并自 openclaw-doctor v4.0 + hermes-doctor v0.1.1
 > 发布日期: 2026-06-19

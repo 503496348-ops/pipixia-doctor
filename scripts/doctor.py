@@ -760,13 +760,154 @@ def command_test(args: argparse.Namespace) -> int:
 
 
 def run_subprocess(command: list[str], cwd: Path, expect: str, exit_codes: tuple[int, ...] = (0,)) -> tuple[bool, str]:
+    """Run a subprocess and check output."""
     proc = subprocess.run(command, cwd=str(cwd), text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=20)
     output = proc.stdout.strip()
     return proc.returncode in exit_codes and expect in output, output
 
 
+# ---------------------------------------------------------------------------
+# Snapshot command (v5.1 数字遗产+复活)
+# ---------------------------------------------------------------------------
+
+
+def command_snapshot(args: argparse.Namespace) -> int:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from agent_snapshot import (
+        save_snapshot, list_snapshots, diff_snapshots, restore_snapshot,
+        verify_snapshot, load_manifest, render_manifest, render_diff, render_list,
+    )
+    target = Path(args.target).expanduser().resolve()
+    snap_dir = target / ".doctor" / "snapshots"
+
+    if args.snapshot_action == "save":
+        archive = save_snapshot(target, args.description or "")
+        manifest_path = archive.parent / f"{archive.stem.replace('.tar', '')}.json"
+        if args.format == "json":
+            manifest = load_manifest(manifest_path)
+            print(json.dumps(asdict(manifest), ensure_ascii=False, indent=2))
+        else:
+            manifest = load_manifest(manifest_path)
+            print(f"🦐 皮皮虾医生 Agent 快照已创建\n\n快照 ID：{manifest.snapshot_id}\n文件数：{manifest.total_files}\n总大小：{manifest.total_size // 1024}KB\n归档路径：{archive}")
+        return 0
+
+    elif args.snapshot_action == "list":
+        snapshots = list_snapshots(target)
+        if args.format == "json":
+            print(json.dumps(snapshots, ensure_ascii=False, indent=2))
+        else:
+            print(render_list(snapshots))
+        return 0
+
+    elif args.snapshot_action == "diff":
+        old_path = snap_dir / f"{args.snapshot_id}.json"
+        new_path = snap_dir / f"{args.other_snapshot_id}.json"
+        if not old_path.exists() or not new_path.exists():
+            print("ERROR: One or both snapshot manifests not found")
+            return 1
+        diff = diff_snapshots(load_manifest(old_path), load_manifest(new_path))
+        if args.format == "json":
+            print(json.dumps(asdict(diff), ensure_ascii=False, indent=2))
+        else:
+            print(render_diff(diff))
+        return 0
+
+    elif args.snapshot_action == "restore":
+        result = restore_snapshot(target, args.snapshot_id, dry_run=args.dry_run)
+        if args.format == "json":
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            status = "预演" if result.get("dry_run") else ("成功" if result.get("success") else "失败")
+            print(f"🦐 快照恢复{status}：{result.get('snapshot_id', '?')}，恢复 {result.get('restored_files', 0)} 个文件")
+        return 0 if result.get("success") or result.get("dry_run") else 1
+
+    elif args.snapshot_action == "verify":
+        result = verify_snapshot(target, args.snapshot_id)
+        if args.format == "json":
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            match = "一致 ✅" if result.get("matches") else "不一致 ❌"
+            print(f"🦐 快照验证：{result.get('snapshot_id', '?')} 状态{match}")
+        return 0 if result.get("matches") else 2
+
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Learn command (v5.1 药方自学习)
+# ---------------------------------------------------------------------------
+
+
+def command_learn(args: argparse.Namespace) -> int:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from rx_learner import (
+        record_feedback, append_feedback, compute_effectiveness,
+        cluster_unmatched_errors, generate_from_resolved_cases,
+        analyze_gaps, render_effectiveness, render_candidates,
+        render_gaps, render_report,
+    )
+    from dataclasses import asdict as dc_asdict
+    target = Path(args.target).expanduser().resolve()
+
+    if args.learn_action == "feedback":
+        if not args.rx_id or not args.query:
+            print("ERROR: --rx-id and --query are required for feedback")
+            return 1
+        entry = record_feedback(
+            rx_id=args.rx_id, query_text=args.query, match_score=args.score,
+            outcome=args.outcome, resolved=args.resolved,
+            resolution_notes=args.resolution, case_id=args.case_id,
+        )
+        append_feedback(target, entry)
+        if args.format == "json":
+            print(json.dumps(entry, ensure_ascii=False, indent=2))
+        else:
+            print(f"🦐 反馈已记录：{args.rx_id} → {args.outcome}")
+        return 0
+
+    elif args.learn_action == "effectiveness":
+        scores = compute_effectiveness(target)
+        if args.format == "json":
+            print(json.dumps([dc_asdict(s) for s in scores], ensure_ascii=False, indent=2))
+        else:
+            print(render_effectiveness(scores))
+        return 0
+
+    elif args.learn_action == "candidates":
+        all_cands = cluster_unmatched_errors(target) + generate_from_resolved_cases(target)
+        if args.format == "json":
+            print(json.dumps([dc_asdict(c) for c in all_cands], ensure_ascii=False, indent=2))
+        else:
+            print(render_candidates(all_cands))
+        return 0
+
+    elif args.learn_action == "gaps":
+        gaps = analyze_gaps(target)
+        if args.format == "json":
+            print(json.dumps(gaps, ensure_ascii=False, indent=2))
+        else:
+            print(render_gaps(gaps))
+        return 0
+
+    elif args.learn_action == "report":
+        if args.format == "json":
+            scores = compute_effectiveness(target)
+            cands = cluster_unmatched_errors(target) + generate_from_resolved_cases(target)
+            gaps = analyze_gaps(target)
+            print(json.dumps({
+                "effectiveness": [dc_asdict(s) for s in scores],
+                "candidates": [dc_asdict(c) for c in cands],
+                "gaps": gaps,
+            }, ensure_ascii=False, indent=2))
+        else:
+            print(render_report(target))
+        return 0
+
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="皮皮虾医生（OpenClaw Doctor）v5.0 CLI")
+    parser = argparse.ArgumentParser(description="皮皮虾医生（OpenClaw Doctor）v5.1 CLI")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("check", help="运行只读健康检查")
@@ -811,6 +952,32 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("test", help="运行集成测试")
     p.add_argument("--target", default=str(ROOT))
     p.set_defaults(func=command_test)
+
+    # --- v5.1: snapshot (数字遗产+复活) ---
+    p = sub.add_parser("snapshot", help="Agent 快照与恢复 (数字遗产+复活)")
+    p.add_argument("--target", default=".")
+    p.add_argument("--snapshot-action", choices=["save", "list", "diff", "restore", "verify"], default="save", help="快照操作")
+    p.add_argument("--snapshot-id", default="", help="快照 ID")
+    p.add_argument("--other-snapshot-id", default="", help="对比用的第二个快照 ID")
+    p.add_argument("--description", default="", help="快照描述")
+    p.add_argument("--dry-run", action="store_true", help="预演模式（不实际恢复）")
+    p.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    p.set_defaults(func=command_snapshot)
+
+    # --- v5.1: learn (药方自学习) ---
+    p = sub.add_parser("learn", help="药方自学习引擎")
+    p.add_argument("--target", default=".")
+    p.add_argument("--learn-action", choices=["feedback", "effectiveness", "candidates", "gaps", "report"], default="report", help="学习操作")
+    p.add_argument("--rx-id", default="", help="药方 ID")
+    p.add_argument("--query", default="", help="原始查询文本")
+    p.add_argument("--score", type=int, default=0, help="匹配分")
+    p.add_argument("--outcome", choices=["hit", "miss", "effective", "ineffective", "skipped"], default="miss")
+    p.add_argument("--resolved", action="store_true", help="问题是否已解决")
+    p.add_argument("--resolution", default="", help="解决方案描述")
+    p.add_argument("--case-id", default="", help="关联病历 ID")
+    p.add_argument("--format", choices=["markdown", "json"], default="markdown")
+    p.set_defaults(func=command_learn)
+
     return parser
 
 
