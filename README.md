@@ -110,7 +110,7 @@ python3 scripts/rx_learner.py --target . --mode report
 
 ## 竞品对标
 
-| 能力 | 皮皮虾医生 v5.1 | Dify | LangChain | AutoGen |
+| 能力 | 皮皮虾医生 v5.1 | 通用工作流平台 | 通用链路框架 | 通用多代理框架 |
 |------|-----------------|------|-----------|---------|
 | Agent健康诊断 | ✅ 深度体检+药方库 | ❌ | ❌ | ❌ |
 | 自愈引擎 | ✅ PCEC循环 | ❌ | ❌ | ❌ |
@@ -235,3 +235,8 @@ AtomCollide-智械工坊团队出品。更多产品见：[AtomCollide Product Ma
 - [CONTRIBUTING](CONTRIBUTING.md)
 
 
+
+## 2026-07-03 运行时增强
+
+- 新增检索过滤注入探针，拦截未知过滤键、空值和危险过滤片段。
+- 交付物包含可导入模块与定向单元测试。

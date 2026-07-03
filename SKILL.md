@@ -1,7 +1,7 @@
 ---
 name: pipixia-doctor
 description: "OpenClaw Agent数字遗产+永恒记忆+复活系统。独立产品，与白龙马医生为同领域不同平台。当需要管理Agent数字遗产、配置永恒记忆、实现Agent复活时使用。"
-version: 5.1.0
+version: 1.1.0
 author: 小乖（李渔樵团队）
 tags: [doctor, diagnosis, self-healing, agent, health-check, prescription]
 requires_tools: [read_file, write_file, edit, exec, search_files]
@@ -125,3 +125,8 @@ pipixia-doctor/
 - **自愈机制**: 检测→定位→修复→验证闭环
 - **数据管线**: 日志采集→模式匹配→异常检测→报告生成
 - **API接口**: Python SDK + CLI工具 + Hermes Agent集成
+
+## 2026-07-03 运行时增强
+
+- 新增检索过滤注入探针，拦截未知过滤键、空值和危险过滤片段。
+- 验证：新增模块通过 py_compile 和定向 pytest，代码不依赖外部服务。
