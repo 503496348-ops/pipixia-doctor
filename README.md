@@ -264,3 +264,7 @@ AtomCollide-智械工坊团队出品。更多产品见：[AtomCollide Product Ma
 - 皮皮虾医生新增 Bridge Repair Advisor：stream idle、workspace missing、Codex JSONL drift、profile crosstalk 修复建议。
 - 新增模块：`diagnostics/bridge_repair.py`
 - 来源模式：飞书/Lark 消息入口、本地 Claude/Codex 执行、会话 fingerprint、profile 隔离与安全门禁。
+
+## Generic orchestration repair plans
+
+Adds deterministic repair planning for drift, stale pending events, poison events, missing flow logs, and broken confirmation states.
