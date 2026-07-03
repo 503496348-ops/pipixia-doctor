@@ -1,0 +1,21 @@
+{
+  "repo": "pipixia-doctor",
+  "entrypoints": [],
+  "smoke_targets": [
+    "scripts/doctor.py",
+    "scripts/doctor_check.py",
+    "scripts/doctor_record.py",
+    "scripts/filter_injection_probe.py",
+    "scripts/health_maintenance.py",
+    "scripts/health_score.py",
+    "scripts/product_convergence_gate.py",
+    "scripts/validate_skill.py"
+  ],
+  "known_external_reference_files": [
+    "diagnostics/__init__.py",
+    "diagnostics/agent_monitor.py",
+    "diagnostics/callback_handler.py",
+    "scripts/product_convergence_gate.py"
+  ],
+  "policy": "External/fusion references are allowed only when explicitly reviewed here; new fusion work must add a smoke target or entrypoint wiring."
+}
