@@ -1,7 +1,7 @@
 ---
 name: pipixia-doctor
 description: "OpenClaw Agent数字遗产+永恒记忆+复活系统。独立产品，与白龙马医生为同领域不同平台。当需要管理Agent数字遗产、配置永恒记忆、实现Agent复活时使用。"
-version: 1.1.0
+version: 1.2.0
 author: 小乖（李渔樵团队）
 tags: [doctor, diagnosis, self-healing, agent, health-check, prescription]
 requires_tools: [read_file, write_file, edit, exec, search_files]
@@ -15,6 +15,10 @@ triggers:
 ---
 
 # 皮皮虾医生v5.1
+
+## Sandbox Repair Context（v1.2.0）
+
+新增 `diagnostics/agent_sandbox_repair_context.py`：把沙盒运行时发现转换为可审阅修复动作，区分自动计划、需要确认与阻断项，并把运行上下文合并进病历记录。
 
 皮皮虾医生是一个面向小白用户的 Agent 自诊断与安全自愈 Skill。不是直接替用户乱修，而是先体检、再分诊、开药方，最后按风险等级确认修复。
 
