@@ -18,6 +18,14 @@ triggers:
 
 ## Sandbox Repair Context（v1.2.0）
 
+## 快速开始
+
+```bash
+python3 scripts/doctor.py --help
+python3 scripts/cli.py --help
+```
+
+
 新增 `diagnostics/agent_sandbox_repair_context.py`：把沙盒运行时发现转换为可审阅修复动作，区分自动计划、需要确认与阻断项，并把运行上下文合并进病历记录。
 
 皮皮虾医生是一个面向小白用户的 Agent 自诊断与安全自愈 Skill。不是直接替用户乱修，而是先体检、再分诊、开药方，最后按风险等级确认修复。
