@@ -30,6 +30,9 @@ Use exact matches first. If multiple prescriptions match, show the safest one fi
 | RX-OPENCLAW-004 | `band`, `bandrouter`, `乐队协作`, `乐队`, `路由失败` | 乐队协作路由组件异常。 | 检查 band 目录和配置文件。 | L2 |
 | RX-MEM-001 | `MEMORY.md`, `memory/`, `记忆`, `记忆过大`, `记忆膨胀` | 记忆系统文件过大或文件过多，影响加载性能。 | 蒸馏精简 MEMORY.md，归档旧记忆文件。 | L1 |
 | RX-MEM-002 | `hearbeats`, `heartbeat/`, `心跳记录过多` | memory/heartbeat/ 目录文件数超过阈值。 | 清理超过30天的历史心跳记录。 | L1 |
+| RX-MEM-003 | `superseded_still_hot`, `active_supersedes_active`, `supersession_inverted`, `dangling_supersedes`, `取代链`, `supersede 冲突` | 记忆取代链未闭环：被取代项仍在热层，或 active 互相 supersede，或悬挂引用。 | 只保留 winner 为 active；旧条 status=superseded 并写 superseded_by；热 MEMORY.md 剔除 superseded/expired；修复或删除悬挂 supersedes。高风险改动需确认。 | L1/L2 |
+| RX-MEM-004 | `missing_protocol_fields`, `empty_clients`, `unknown_status`, `协议字段`, `cognitive_type` | 记忆卡/笔记缺少跨客户端协议字段（clients/status/supersedes/cognitive_type）或 status 非法。 | 回填 frontmatter：clients[]、status∈{active,superseded,archived}、supersedes[]、cognitive_type；与 fact_store supersede 映射一致。 | L1 |
+| RX-MEM-005 | `client_coverage_gap`, `跨客户端`, `clients 覆盖` | 期望的客户端（hermes/codex/claude 等）在 active 卡上无覆盖，或未文档化单端范围。 | 为共享结论补 clients 标签；单端记忆在卡上显式注明 scope；必要时从各端导出后对齐 Markdown SoT。 | L1/L2 |
 | RX-SKILL-001 | `SKILL.md`, `缺少 Skill`, `Skill 结构不完整`, `Codex 无法识别` | Skill 包结构不完整，缺少入口文件。 | 补充 SKILL.md 及必要子目录。 | L1 |
 | RX-SKILL-002 | `agents/openai.yaml`, `缺少 openai.yaml`, `UI 触发配置缺失` | Skill 缺少 UI 触发配置，无法被界面识别。 | 补充 agents/openai.yaml，default_prompt 包含 skill-name。 | L1 |
 | RX-SKILL-003 | `__pycache__`, `临时文件`, `缓存文件`, `pyc` | 项目包含不必要的缓存文件。 | 清理 `__pycache__` 和 `.pyc` 文件。 | L0 |
